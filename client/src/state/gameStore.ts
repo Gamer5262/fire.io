@@ -1,0 +1,19 @@
+import { create } from 'zustand'
+
+type GameState = {
+  health: number
+  ammo: number
+  isPaused: boolean
+  setHealth: (h: number) => void
+  setAmmo: (a: number) => void
+  setPaused: (p: boolean) => void
+}
+
+export const useGameStore = create<GameState>((set) => ({
+  health: 100,
+  ammo: 30,
+  isPaused: false,
+  setHealth: (h: number) => set({ health: h }),
+  setAmmo: (a: number) => set({ ammo: a }),
+  setPaused: (p: boolean) => set({ isPaused: p }),
+}))
