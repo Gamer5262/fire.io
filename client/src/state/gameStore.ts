@@ -11,7 +11,7 @@ type GameState = {
 
 export const useGameStore = create<GameState>((set) => ({
   health: 100,
-  ammo: 30,
+  ammo: 100,
   isPaused: false,
   setHealth: (h: number) => set({ health: h }),
   setAmmo: (a: number) => set({ ammo: a }),
