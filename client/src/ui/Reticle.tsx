@@ -25,7 +25,7 @@ const Reticle: React.FC<ReticleProps> = ({ size = 20, color = 'white', thickness
   }
 
   return (
-    <div
+    <div  
       aria-hidden
       style={{
         position: 'fixed',
