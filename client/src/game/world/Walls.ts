@@ -68,11 +68,11 @@ export function createWallBoundary(
   texturePath: string | undefined = undefined,
   size: number = 30,
   wallHeight: number = 10,
-  tileSize: number = 1
+  tileSize: number = 1,
+  wallThickness: number = 0.2
 ) {
   const walls: any[] = [];
   const halfSize = size / 2;
-  const wallThickness = 0.2;
 
   // North wall
   walls.push(createWalls(scene, {

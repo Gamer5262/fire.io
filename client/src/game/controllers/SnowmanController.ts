@@ -9,7 +9,9 @@ export class SnowmanController {
   }
 
   public move(direction: Vector3) {
-    this.mesh.position.addInPlace(direction);
+    // Use Babylon's collision system when moving the snowman.
+    // The mesh has an ellipsoid set in Snowman.ts.
+    this.mesh.moveWithCollisions(direction);
   }
 
   // Add more snowman-specific logic here

@@ -7,7 +7,7 @@ type ReticleProps = {
   thickness?: number // px
 }
 
-const Reticle: React.FC<ReticleProps> = ({ size = 20, color = 'white', thickness = 2 }) => {
+const Reticle: React.FC<ReticleProps> = ({ size = 10, color = 'white', thickness = 2 }) => {
   const isFocused = useGameStore((s) => s.isFocused)
   const half = size / 2
 

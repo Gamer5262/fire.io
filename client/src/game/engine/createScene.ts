@@ -3,6 +3,7 @@ import { createGround } from '../world/ground';
 import { Snowman } from '../entities/Snowman';
 import { createWallBoundary } from '../world/Walls';
 import { createRoof } from '../world/Roof';
+import { getWorldConfig } from '../config/worldConfig';
 
 export function createScene(engine: Engine, canvas: HTMLCanvasElement): Scene {
   const scene = new Scene(engine);
@@ -11,10 +12,8 @@ export function createScene(engine: Engine, canvas: HTMLCanvasElement): Scene {
   scene.collisionsEnabled = true;
   scene.gravity = new Vector3(0, -0.9, 0);
 
-  // Camera
+  // Camera (movement/collisions are handled by the snowman root mesh)
   const camera = new UniversalCamera('camera', new Vector3(0, 2, -5), scene);
-  camera.checkCollisions = true;
-  (camera as any).applyGravity = true;
   camera.attachControl(canvas, true);    // enable input (mouse + keyboard)
   camera.angularSensibility = 10000;
 
@@ -57,13 +56,13 @@ export function createScene(engine: Engine, canvas: HTMLCanvasElement): Scene {
   camera.inputs.removeByType("FreeCameraKeyboardMoveInput"); // Remove keyboard input
 
   // Configure mouse input for immediate control
-  // const mouseInput = camera.inputs.attached.mouse;
-  // if (mouseInput) {
-  //   mouseInput.buttons = [0, 1, 2]; // Left, middle, right mouse buttons
-  //   mouseInput.wheelPrecisionX = 3.0;
-  //   mouseInput.wheelPrecisionY = 3.0;
-  //   mouseInput.wheelPrecisionZ = 3.0;
-  // }
+   const mouseInput = camera.inputs.attached.mouse;
+   if (mouseInput) {
+     mouseInput.buttons = [0, 1, 2];  //Left, middle, right mouse buttons
+     mouseInput.wheelPrecisionX = 3.0;
+     mouseInput.wheelPrecisionY = 3.0;
+     mouseInput.wheelPrecisionZ = 3.0;
+   }
 
   // Expose snowman for controller
   try {
@@ -72,16 +71,27 @@ export function createScene(engine: Engine, canvas: HTMLCanvasElement): Scene {
     // ignore
   }
 
-  // Create world geometry
-  createGround(scene, 20, '/floor-texture.png', 1);
+  // Load world configuration
+  const worldConfig = getWorldConfig();
+
+  // Create world geometry using config
+  createGround(scene, worldConfig.arena.size, worldConfig.textures.ground, worldConfig.tiling.ground);
   // Create walls on 4 sides with images
-  createWallBoundary(scene, '/wall-texture.jpg', 20, 10, 1);
+  createWallBoundary(
+    scene,
+    worldConfig.textures.walls,
+    worldConfig.arena.size,
+    worldConfig.walls.height,
+    worldConfig.tiling.walls,
+    worldConfig.walls.thickness
+  );
 
-  createRoof(scene, 20, 10, '/roof-texture.jpg');
+  createRoof(scene, worldConfig.arena.size, worldConfig.walls.height, worldConfig.textures.roof);
 
-  // Enforce a movement boundary that matches the arena size
-  const arenaHalfSize = 10; // ground size / 2
-  const margin = 0.5;       // keep a bit away from the walls
+  // Enforce a movement boundary that matches the arena size,
+  // but keep the player away from the walls according to config
+  const arenaHalfSize = worldConfig.arena.halfSize;
+  const margin = worldConfig.boundary.margin;
 
   scene.onBeforeRenderObservable.add(() => {
     const p = snowmanMesh.position;
